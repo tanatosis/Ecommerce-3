@@ -51,6 +51,9 @@ function cargarProductosCarrito() {
 
         actualizarBotonesEliminar();
         actualizarTotal();
+        actualizarIva();
+        actualizarDespacho();
+        totalProducto ();
 
     } else {
         contenedorCarritoVacio.classList.remove("disabled");
@@ -123,11 +126,52 @@ function vaciarCarrito() {
     })
 }
 
-
 function actualizarTotal() {
     const totalCalculado = productosEnCarrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad), 0);
-    total.innerText = `$${totalCalculado}`;
+    neto.innerText = `$${totalCalculado}`;
+
+    return totalCalculado
 }
+ 
+
+function actualizarIva() {
+    const ivaCalculado = productosEnCarrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad) * 0.19, 0);
+    iva.innerText =  `$${ivaCalculado}`;
+
+    return ivaCalculado
+    }
+
+function actualizarDespacho() {
+    const totalCalculado= productosEnCarrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad), 0);
+    if (totalCalculado < 100000) {
+        despacho.innerText = `$${totalCalculado*0.05}`
+    
+    } else if (totalCalculado => 100000)
+        despacho.innerText = `0`;
+return totalCalculado
+        
+    }
+
+    const precioProducto = actualizarTotal()
+    const precioIva = actualizarIva()
+    const precioDespacho = actualizarDespacho()
+
+   
+
+    function totalProducto (){
+        
+        var precioProducto = actualizarTotal()
+        var precioIva = actualizarIva()
+        var precioDespacho = actualizarDespacho()
+
+       total.innerText = `$${precioProducto + precioIva + (precioDespacho*0.05)}`
+        
+
+
+
+
+    }
+
 
 botonComprar.addEventListener("click", comprarCarrito);
 

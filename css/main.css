@@ -262,7 +262,7 @@ main {
 }
 
 .carrito-acciones-total {
-    display: flex;
+    display: block;
     background-color: var(--clr-gray);
     padding: 1rem;
     color: var(--clr-main);
