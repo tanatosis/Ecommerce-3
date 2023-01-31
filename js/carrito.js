@@ -11,6 +11,48 @@ const contenedorTotal = document.querySelector("#total");
 const botonComprar = document.querySelector("#carrito-acciones-comprar");
 
 
+
+//funcion onclick
+
+
+function pago() {
+
+    almacenarProductos();
+
+
+}
+
+function almacenarProductos() {
+
+
+    localStorage.setItem("compra-activa", JSON.stringify(productosEnCarrito));
+
+}
+
+function mostrarProductos() {
+
+    const arregloCarrito = JSON.parse(localStorage.getItem("compra-activa"));
+    console.log(arregloCarrito);
+
+    arregloCarrito.forEach(p => {
+
+        document.querySelector("#contenedor-carrito").append(
+            `Titulo: ${p.titulo}
+            cantidad: ${p.cantidad}
+            Precio: ${p.precio}
+            `
+        )
+
+    });
+
+}
+
+
+
+
+
+
+
 function cargarProductosCarrito() {
     if (productosEnCarrito && productosEnCarrito.length > 0) {
 
@@ -53,7 +95,7 @@ function cargarProductosCarrito() {
         actualizarTotal();
         actualizarIva();
         actualizarDespacho();
-        totalProducto ();
+        totalProducto();
 
     } else {
         contenedorCarritoVacio.classList.remove("disabled");
@@ -132,45 +174,45 @@ function actualizarTotal() {
 
     return totalCalculado
 }
- 
+
 
 function actualizarIva() {
     const ivaCalculado = productosEnCarrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad) * 0.19, 0);
-    iva.innerText =  `$${ivaCalculado}`;
+    iva.innerText = `$${ivaCalculado}`;
 
     return ivaCalculado
-    }
+}
 
 function actualizarDespacho() {
-    const totalCalculado= productosEnCarrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad), 0);
+    const totalCalculado = productosEnCarrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad), 0);
     if (totalCalculado < 100000) {
         despacho.innerText = `$${totalCalculado*0.05}`
-    
+
     } else if (totalCalculado => 100000)
         despacho.innerText = `0`;
-return totalCalculado
-        
-    }
+    return totalCalculado
 
-    const precioProducto = actualizarTotal()
-    const precioIva = actualizarIva()
-    const precioDespacho = actualizarDespacho()
+}
 
-   
-
-    function totalProducto (){
-        
-        var precioProducto = actualizarTotal()
-        var precioIva = actualizarIva()
-        var precioDespacho = actualizarDespacho()
-
-       total.innerText = `$${precioProducto + precioIva + (precioDespacho*0.05)}`
-        
+const precioProducto = actualizarTotal()
+const precioIva = actualizarIva()
+const precioDespacho = actualizarDespacho()
 
 
 
+function totalProducto() {
 
-    }
+    var precioProducto = actualizarTotal()
+    var precioIva = actualizarIva()
+    var precioDespacho = actualizarDespacho()
+
+    total.innerText = `$${precioProducto + precioIva + (precioDespacho*0.05)}`
+
+
+
+
+
+}
 
 
 botonComprar.addEventListener("click", comprarCarrito);
@@ -184,5 +226,39 @@ function comprarCarrito() {
     contenedorCarritoProductos.classList.add("disabled");
     contenedorCarritoAcciones.classList.add("disabled");
     contenedorCarritoComprado.classList.remove("disabled");
+
+}
+
+//-----DATOS ENVIO MAIL CON DATOS DE DESPACHO -------------------
+function sendMail() {
+    var params = {
+        titulo: document.getElementById("tituloDespacho"),
+        direccion: document.getElementById("direccion").value,
+        comuna: document.getElementById("comuna").value,
+        region: document.getElementById("region").value,
+        email: document.getElementById("email").value,
+        destinatario: document.getElementById("destinatario").value,
+        lista: document.getElementById("contenedor-carrito").value,
+
+
+
+    };
+
+    const serviceID = "service_l94rwqo";
+    const templateID = "template_45kprx6";
+
+    emailjs.send(serviceID, templateID, params)
+        .then(res => {
+            document.getElementById("direccion").value = "";
+            document.getElementById("comuna").value = "",
+                document.getElementById("region").value = "",
+                document.getElementById("destinatario").value = "";
+            document.querySelector("#contenedor-carrito").value = "";
+
+            console.log(res);
+            alert("Mensaje enviado exitosamente!!")
+
+        })
+        .catch(err => console.log(err));
 
 }
